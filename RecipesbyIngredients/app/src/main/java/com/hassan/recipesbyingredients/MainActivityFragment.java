@@ -10,11 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -111,7 +115,7 @@ public class MainActivityFragment extends Fragment {
 
     public class GetRecipes extends AsyncTask<String, Void, String> {
         private static final String API_URL = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients";
-        private static final String API_KEY = "";
+        private static final String API_KEY = "iogrcokopJmshQlfZUmJdwRwwxG2p1Mn65HjsnaIDjPP96ZLIE";
 
         @Override
         protected void onPreExecute() {
@@ -124,7 +128,20 @@ public class MainActivityFragment extends Fragment {
             String result = null;
             try{
                 URL url = new URL(API_URL + "?fillIngredients=false" + "&ingredients="+ URLEncoder.encode(ingredients, "UTF-8") + "&limitLicense=false&number=5&ranking=1" + "&dataType=json&mashape-key=" + API_KEY);
-
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                }
+                finally{
+                    urlConnection.disconnect();
+                }
 //                HttpResponse<JsonNode> response = Unirest.get(url)
 //                    .header("X-Mashape-Key", "<required>")
 //                    .header("Accept", "application/json")
@@ -142,6 +159,7 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(String response) {
             progressbar.setVisibility(View.INVISIBLE);
             button.setVisibility(View.VISIBLE);
+            // GridView.setText(response);
         }
     }
 }
