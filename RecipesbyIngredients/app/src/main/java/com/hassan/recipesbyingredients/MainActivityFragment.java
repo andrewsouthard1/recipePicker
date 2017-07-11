@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,7 +29,6 @@ public class MainActivityFragment extends Fragment {
     Button button;
     ProgressBar progressbar;
     String ingredients = "";
-    JSONObject recipes_result = new JSONObject();
 
     public MainActivityFragment() {
     }
@@ -71,42 +69,13 @@ public class MainActivityFragment extends Fragment {
                             error.setVisibility(View.VISIBLE);
                         }else {
                             try{
-                                new GetRecipes().execute().get();
-
-                                final Intent recipesactivity = new Intent(getActivity(), RecipesActivity.class);
-                                startActivity(recipesactivity);
-
-
+                                new GetRecipes().execute();
                             }catch (Exception e){
-
+                                e.printStackTrace();
                             }
-
-//                        error.setText("Gooood");
-//                        error.setTextColor(Color.GREEN);
-//                        error.setVisibility(View.VISIBLE);
-//                        error.setVisibility(View.INVISIBLE);
-
                         }
-
-//                        HttpResponse<JsonNode> response = Unirest.get(
-//                                "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?fillIngredients=false&" +
-//                                        "ingredients=apples%2Cflour%2Csugar&limitLicense=false&number=5&ranking=1")
-//                                .header("X-Mashape-Key", "<required>")
-//                                .header("Accept", "application/json")
-//                                .asJson();
                     }
                 }
-
-//                try {
-//                    usamount = Double.parseDouble(usdollarEditText.getText().toString());
-//
-//                    double franc = 0;
-//                    franc = usamount * 439.36;
-//                    DecimalFormat format = new DecimalFormat("#.00");
-//                    result.setText(usamount + " US Dollar equal " + Double.valueOf(format.format(franc)) + " Comorian Francs");
-//                }catch (NumberFormatException e){
-//                    result.setText("Please check your input");
-//                }
             }
         });
 
@@ -127,30 +96,19 @@ public class MainActivityFragment extends Fragment {
         protected String doInBackground(String... params) {
             String result = null;
             try{
-                URL url = new URL(API_URL + "?fillIngredients=false" + "&ingredients="+ URLEncoder.encode(ingredients, "UTF-8") + "&limitLicense=false&number=5&ranking=1" + "&dataType=json&mashape-key=" + API_KEY);
+                URL url = new URL(API_URL + "?fillIngredients=false" + "&ingredients="+ URLEncoder.encode(ingredients, "UTF-8") + "&limitLicense=false&number=2&ranking=1" + "&dataType=json&mashape-key=" + API_KEY);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
-                    }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder stringBuilder = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
                 }
-                finally{
-                    urlConnection.disconnect();
-                }
-//                HttpResponse<JsonNode> response = Unirest.get(url)
-//                    .header("X-Mashape-Key", "<required>")
-//                    .header("Accept", "application/json")
-//                    .asJson();
-//                JSONObject myObject = new JSONObject(result);
+                bufferedReader.close();
 
+                return stringBuilder.toString();
             }catch (Exception e){
-                Log.e("Image", "Failed to load URL", e);
-                Log.e("error", e.getMessage());
+                e.printStackTrace();
             }
             return result;
         }
@@ -159,7 +117,15 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(String response) {
             progressbar.setVisibility(View.INVISIBLE);
             button.setVisibility(View.VISIBLE);
-            // GridView.setText(response);
+//            System.out.println(response);
+            if (response.length() < 10){
+                error.setText("Your search did not match any recipe. Please add some new ingredients and try again.");
+                error.setVisibility(View.VISIBLE);
+            }else {
+                final Intent recipesactivity = new Intent(getActivity(), RecipesActivity.class);
+                recipesactivity.putExtra("JSON", response);
+                startActivity(recipesactivity);
+            }
         }
     }
 }

@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="The app where your leftovers will no longer go to waste"
             android:textAlignment="center"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="0dp" />
@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/textView2"
+            android:layout_marginBottom="10dp"
             android:text="TextView"
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_dark"
@@ -40,10 +41,10 @@
         <EditText
             android:id="@+id/input"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView2"
-            android:layout_marginTop="15dp"
+            android:layout_below="@+id/error"
+            android:layout_marginBottom="100dp"
             android:ems="10"
             android:gravity="top"
             android:hint="Please input one ingredient per line"
@@ -56,6 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/input"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="-100dp"
             android:text="Find Recipes"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="72dp" />
@@ -67,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/submit"
             android:layout_centerHorizontal="true"
-            android:visibility="invisible" />
+            tools:visibility="invisible" />
 
     </RelativeLayout>
 
